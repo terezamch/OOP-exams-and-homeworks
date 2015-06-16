@@ -2,6 +2,7 @@
 #include <cstring>
 #include <cassert>
 #include <cmath>
+#include <cstdlib>
 using namespace std;
 class Binary
 {
@@ -13,15 +14,16 @@ public:
     {
         this->sizeOfNum = sizeOfNum;
         this->capacity = capacity;
-        binaryNum = new char[capacity];
-        assert(binaryNum!=NULL);
+        this->binaryNum = new char[capacity];
+        assert(this->binaryNum != NULL);
+        strcpy(this->binaryNum, binaryNum);
     }
     Binary(const Binary& other)
     {
         sizeOfNum = other.sizeOfNum;
         capacity = other.capacity;
         binaryNum = new char[other.capacity];
-        assert(binaryNum!=NULL);
+        assert(binaryNum != NULL);
         strcpy(binaryNum, other.binaryNum);
     }
     ~Binary()
@@ -36,7 +38,7 @@ public:
             sizeOfNum = other.sizeOfNum;
             capacity = other.capacity;
             binaryNum = new char[other.capacity];
-            assert(binaryNum!=NULL);
+            assert(binaryNum != NULL);
             strcpy(binaryNum, other.binaryNum);
         }
         return *this;
@@ -63,6 +65,10 @@ public:
     {
         return capacity;
     }
+    char* getBinaryNum() const
+    {
+        return binaryNum;
+    }
     void print()
     {
         cout<<"Binary"<<endl;
@@ -70,13 +76,25 @@ public:
             <<"Capacity: "<<capacity<<endl
             <<"Binary number: "<<binaryNum<<endl;
     }
+    bool operator==(const Binary& other)
+    {
+        if(!strcmp(this->binaryNum, other.binaryNum))
+            return true;
+        return false;
+    }
+    bool operator!=(const Binary& other)
+    {
+        if(strcmp(this->binaryNum, other.binaryNum) == 1 || strcmp(this->binaryNum, other.binaryNum) == -1)
+            return true;
+        return false;
+    }
     bool operator>(const Binary& other)
     {
-        return fromBinary(this->binaryNum) > fromBinary(other.binaryNum);
+        return (this->getBinaryNum().fromBinary()) > (other.getBinaryNum().fromBinary());
     }
     bool operator<(const Binary& other)
     {
-        return fromBinary(this->binaryNum) < fromBinary(other.binaryNum);
+        return this->getBinaryNum().fromBinary() < other.getBinaryNum().fromBinary();
     }
     Binary operator+(const Binary& other)
     {
@@ -85,9 +103,9 @@ public:
             maxSize = strlen(this->binaryNum);
         else
             maxSize = strlen(other.binaryNum);
-        Binary result = new char[maxSize+2];
+        Binary result = new char[maxSize + 2];
         assert(result!=NULL);
-        int tmp = fromBinary(this->binaryNum) + fromBinary(other.binaryNum);
+        int tmp = this->getBinaryNum().fromBinary() + other.getBinaryNum().fromBinary();
         strcpy(result.binaryNum, toBinary(tmp));
         return result.binaryNum;
     }
@@ -98,11 +116,11 @@ public:
             maxSize = strlen(this->binaryNum);
         else
             maxSize = strlen(other.binaryNum);
-        Binary result = new char[maxSize+2];
+        Binary result = new char[maxSize + 2];
         assert(result!=NULL);
-        if(fromBinary(this->binaryNum) > fromBinary(other.binaryNum))
+        if(this->getBinaryNum().fromBinary() > other.getBinaryNum().fromBinary())
         {
-            int tmp = fromBinary(this->binaryNum) - fromBinary(other.binaryNum);
+            int tmp = this->getBinaryNum().fromBinary() - other.getBinaryNum().fromBinary();
             strcpy(result.binaryNum, toBinary(tmp));
             return result.binaryNum;
         }
@@ -112,7 +130,30 @@ public:
 
     char* toBinary(int n)
     {
-        int i = 0;
+        int sizeOfNum = 0;
+        int copyOfNum = n;
+        while(copyOfNum != 0)
+        {
+            copyOfNum /= 10;
+            sizeOfNum++;
+        }
+        binaryNum = new char[sizeOfNum+1];
+        assert(binaryNum != NULL);
+        itoa(n, binaryNum, 2);
+        return binaryNum;
+    }
+    int fromBinary()
+    {
+        int sum = 0, k = 0;
+        for(int i=sizeOfNum-1; i>=0; i--)
+        {
+            sum += this->binaryNum[i]*(pow(2,k));
+            k++;
+        }
+        return sum;
+    }
+}; /*
+int i = 0;
         do
         {
             binaryNum[i]=n%2;
@@ -127,21 +168,16 @@ public:
             binaryNum[i] = binaryNum[sizeOfNum - i - 1];
             binaryNum[sizeOfNum - i - 1] = tmp;
         }
-        return binaryNum;
-    }
-    int fromBinary(char* binary)
-    {
-        int sum = 0, k = 0;
-        for(int i=strlen(binary)-1; i>=0; i--)
-        {
-            sum = binary[i]*(pow(2,k));
-            k++;
-        }
-        return sum;
-    }
-};
-
+        return binaryNum; */
 int main()
 {
+    Binary b1("1011", 4, 10);
+    Binary b2("1001", 4, 10);
+    b1.print();
+    b2.print();
+    if(b1 > b2) cout<< "cool"<<endl;
+    else cout<<"fuck OOP"<<endl;
+    //cout<< fromBinary("1001")<<endl;
     return 0;
 }
+
