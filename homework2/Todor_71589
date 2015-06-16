@@ -1,0 +1,180 @@
+#include <iostream>
+#include <cmath>
+using namespace std;
+
+const double PI = 3.14159265;
+
+struct Point {
+	double x, y;
+
+	Point(double x = 0, double y = 0) {
+		this->x = x;
+		this->y = y;
+	}
+
+	Point(const Point &other) {
+		x = other.x;
+		y = other.y;
+	}
+
+	Point &operator =(const Point &other) {
+		if (this != &other) {
+			x = other.x;
+			y = other.y;
+		}
+		return*this;
+	}
+
+	bool operator ==(const Point &other) {
+		return x == other.x && y == other.y;
+	}
+};
+
+class Figure {
+public:
+	virtual double getArea() = 0;
+	virtual double getPerimeter() = 0;
+	virtual Point getCenter() = 0;
+	double getDistance(Point a, Point b) {
+		return sqrt((a.x - b.x)*(a.x - b.x) + (a.y - b.y)*(a.y - b.y));
+	}
+};
+
+class Triangle : public Figure {
+private:
+	Point a, b, c;
+
+public:
+	Triangle(Point a, Point b, Point c) {
+		this->a = a;
+		this->b = b;
+		this->c = c;
+	}
+
+	Triangle(const Triangle &other) {
+		a = other.a;
+		b = other.b;
+		c = other.c;
+	}
+
+	Triangle &operator =(const Triangle &other) {
+		if (this != &other) {
+			a = other.a;
+			b = other.b;
+			c = other.c;
+		}
+		return*this;
+	}
+
+	bool operator ==(const Triangle &other) {
+		return a == other.a && b == other.b && c == other.c;
+	}
+
+	virtual double getArea() {
+		double p = getPerimeter() / 2;
+		return sqrt(p * (p - getDistance(a, b)) * (p - getDistance(a, c)) * (p - getDistance(b, c)));
+	}
+
+	virtual double getPerimeter() {
+		return getDistance(a, b) + getDistance(a, c) + getDistance(b, c);
+	}
+
+	virtual Point getCenter() {
+		double A = getDistance(b, c);
+		double B = getDistance(a, c);
+		double C = getDistance(a, b);
+		int x = (A*a.x + B*b.x + C*c.x) / (A + B + C);
+		int y = (A*a.y + B*b.y + C*c.y) / (A + B + C);
+		return Point(x, y);
+	}
+};
+
+class Circle : public Figure {
+private:
+	Point a;
+	double r;
+
+public:
+	Circle(Point a, double r = 0) {
+		this->a = a;
+		this->r = r;
+	}
+
+	Circle(const Circle &other) {
+		a = other.a;
+		r = other.r;
+	}
+
+	Circle &operator =(const Circle &other) {
+		if (this != &other) {
+			a = other.a;
+			r = other.r;
+		}
+		return*this;
+	}
+
+	bool operator ==(const Circle &other) {
+		return a == other.a && r == other.r;
+	}
+
+	virtual double getArea() {
+		return r * r * PI;
+	}
+
+	virtual double getPerimeter() {
+		return 2 * r * PI;
+	}
+
+	virtual Point getCenter() {
+		return a;
+	}
+};
+
+class Rectangle : public Figure {
+private:
+	Point a;
+	double width, height;
+
+public:
+	Rectangle(Point a, double width = 1, double height = 1) {
+		this->a = a;
+		this->width = width;
+		this->height = height;
+	}
+
+	Rectangle(const Rectangle &other) {
+		a = other.a;
+		width = other.width;
+		height = other.height;
+	}
+
+	Rectangle &operator =(const Rectangle &other) {
+		if (this != &other) {
+			a = other.a;
+			width = other.width;
+			height = other.height;
+		}
+		return*this;
+	}
+
+	bool operator ==(const Rectangle &other) {
+		return a == other.a && width == other.width && height == other.height;
+	}
+
+	virtual double getArea() {
+		return width * height;
+	}
+
+	virtual double getPerimeter() {
+		return 2 * width + 2 * height;
+	}
+
+	virtual Point getCenter() {
+		return Point(a.x + width / 2, a.y - height / 2);
+	}
+};
+
+int main() {
+
+	return 0;
+}
