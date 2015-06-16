@@ -3,7 +3,7 @@ Results from homeworks and exams
 :)</br>
 
 K1 - Group 1: </br>
-71594 K1 5.00 </br>
+71594 K1 5.00 D1 later K2 4.00  </br>
 71530 K1 6.00 D1 later K2 5.00 D2 waiting </br>
 71565 K1 5.20 D1 later K2 3.30 D2 waiting </br>
 71568 K1 3.40 D1 later K2 3.40 D2 waiting </br>
