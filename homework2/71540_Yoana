@@ -1,0 +1,400 @@
+#include "figure.h"
+#include <iostream>
+#define M_PI
+#include <cmath>
+
+using namespace std;
+
+struct Dot
+{
+	Dot();
+	Dot(double, double);
+	double getX() const;
+	double getY() const;
+	void setX(double);
+	void setY(double);
+	void print() const;
+	void read();
+	Dot& operator=(const Dot&);
+	bool operator==(const Dot&);
+	double x, y;
+};
+
+class Figure
+{
+public:
+	virtual double area() const = 0;
+	virtual double perim() const = 0;
+	virtual Dot& getCenter() const = 0;
+};
+
+class Triangle : public Figure
+{
+public:
+	Triangle(Dot a, Dot b, Dot c);
+	double getFirstCoordX() const;
+	double getFirstCoordY() const;
+	double getSecondCoordX() const;
+	double getSecondCoordY() const;
+	double getThirdCoordX() const;
+	double getThirdCoordY() const;
+	virtual double area() const;
+	virtual double perim() const;
+	virtual Dot& getCenter() const;
+	virtual bool operator==(const Triangle& other);
+private:
+	Dot a[3];
+};
+
+class Rectangle : public Figure
+{
+public:
+	Rectangle(Dot, Dot);
+	double getFirstCoordX() const;
+	double getSecondCoordX() const;
+	double getFirstCoordY() const;
+	double getSecondCoordY() const;
+	double getWidth() const;
+	double getHeight() const;
+	virtual double area() const;
+	virtual double perim() const;
+	virtual Dot& getCenter() const;
+	virtual bool operator==(const Rectangle& other);
+private:
+	Dot a[2];
+};
+
+class Circle : public Figure
+{
+public:
+	Circle(Dot, double);
+	double getRadius() const;
+	virtual double area() const;
+	virtual double perim() const;
+	virtual Dot& getCenter() const;
+	virtual bool operator==(const Circle& other);
+private:
+	Dot &c;
+	double r;
+};
+
+Dot::Dot()
+{
+	x = 0;
+	y = 0;
+}
+
+Dot::Dot(double x, double y)
+{
+	this->x = x;
+	this->y = y;
+}
+
+double Dot::getX() const
+{
+	return x;
+}
+
+double Dot::getY() const
+{
+	return y;
+}
+
+void Dot::setX(double x)
+{
+	this->x = x;
+}
+
+void Dot::setY(double y)
+{
+	this->y = y;
+}
+
+void Dot::read()
+{
+	cout << "Enter x:";
+	cin >> x;
+	setX(x);
+	cout << "Enter y:";
+	cin >> y;
+	setY(y);
+}
+
+Dot& Dot :: operator=(const Dot& other)
+{
+	if (this != &other)
+	{
+		this->x = other.x;
+		this->y = other.y;
+	}
+}
+
+bool Dot::operator==(const Dot& other)
+{
+	return(this->x == other.x && this->y == other.y);
+}
+
+void Dot::print() const
+{
+	cout << "Dot: (" << x << ", " << y << ")" << endl;
+}
+
+Triangle::Triangle(Dot a, Dot b, Dot c)
+{
+	if ((a.getX() != b.getX() && b.getX() != c.getX()) || (a.getY() != b.getY() && b.getY() != c.getY()))
+	{
+		this->a[0] = a;
+		this->a[1] = b;
+		this->a[2] = c;
+	}
+}
+
+double Triangle:: getFirstCoordX() const
+{
+	return a[0].getX();
+}
+
+double Triangle::getFirstCoordY() const
+{
+	return a[0].getY();
+}
+
+double Triangle :: getSecondCoordX() const
+{
+	return a[1].getX();
+}
+
+double Triangle :: getSecondCoordY() const
+{
+	a[1].getY();
+}
+
+double Triangle::getThirdCoordX() const
+{
+	return a[2].getX();
+}
+
+double Triangle::getThirdCoordY() const
+{
+	return a[2].getY();
+}
+
+double Triangle::area() const
+{
+	double first = (a[0].x - a[2].x)*(a[1].y - a[0].y);
+	double second = (a[0].x - a[1].x)*(a[2].y - a[0].y);
+	cout << "Triangle's area is :";
+	return abs((first - second) / 2);
+}
+
+double Triangle::perim() const
+{
+	double first = sqrt(pow((a[2].x - a[0].x), 2) + pow((a[2].y - a[0].y), 2));
+	double second = sqrt(pow((a[1].x - a[0].x), 2) + pow((a[1].y - a[0].y), 2));
+	double third = sqrt(pow((a[2].x - a[1].x), 2) + pow((a[2].y - a[1].y), 2));
+	return first + second + third;
+}
+
+Dot& Triangle::getCenter() const
+{
+	double Ox = (a[0].x + a[1].x + a[2].x) / 3;
+	double Oy = (a[0].y + a[1].y + a[2].y) / 3;
+	return Dot(Ox, Oy);
+}
+
+bool Triangle :: operator==(const Triangle& other)
+{
+	return (this->a[0] == other.a[0] &&
+			this->a[1] == other.a[1] &&
+			this->a[2] == other.a[2]);
+}
+
+Rectangle::Rectangle(Dot a, Dot b)
+{
+	if (a.getX() != b.getX() && a.getY() != b.getY())
+	{
+		this->a[0] = a;
+		this->a[1] = b;
+	}
+}
+
+double Rectangle::getFirstCoordX() const
+{
+	return a[0].getX();
+}
+
+double Rectangle:: getSecondCoordX() const
+{
+	return a[1].getX();
+}
+double Rectangle::getFirstCoordY() const
+{
+	return a[0].getY();
+}
+
+double Rectangle::getSecondCoordY() const
+{
+	return a[1].getY();
+}
+
+double Rectangle::getWidth() const
+{
+	return a[1].x - a[0].x;
+}
+
+double Rectangle::getHeight() const
+{
+	return a[1].y - a[0].y;
+}
+
+double Rectangle::area() const
+{
+	return getWidth() * getHeight();
+}
+
+double Rectangle::perim() const
+{
+	return 2 * (getWidth() + getHeight());
+}
+
+Dot& Rectangle::getCenter() const
+{
+	return Dot((a[1].x - a[0].x) / 2, (a[1].y - a[0].y) / 2);
+}
+
+bool Rectangle :: operator==(const Rectangle &other)
+{
+	return (this->a[0] == other.a[0] &&
+			this->a[1] == other.a[1]);
+}
+
+Circle::Circle(Dot c, double r)
+{
+	this->c = c; 
+	this->r = r;
+}
+
+double Circle::getRadius() const
+{
+	return r;
+}
+
+double Circle::area() const
+{
+	return pow(r, 2) M_PI;
+}
+
+double Circle::perim() const
+{
+	return (2 * r)M_PI;
+}
+
+Dot& Circle::getCenter() const
+{
+	return c;
+}
+
+bool Circle :: operator==(const Circle& other)
+{
+	return(this->c == other.c && this->r == other.r);
+}
+
+bool isCircleInCircle(const Circle &first, const Circle &second)
+{
+	double getX1 = first.getCenter().getX() - first.getRadius();
+	double getX2 = first.getCenter().getX() + first.getRadius();
+	double getY1 = first.getCenter().getY() - first.getRadius();
+	double getY2 = first.getCenter().getY() + first.getRadius();
+	double getX122 = second.getCenter().getX() - second.getRadius();
+	double getX2 = second.getCenter().getX() + second.getRadius();
+	double getY122 = second.getCenter().getY() - second.getRadius();
+	double getY2 = second.getCenter().getY() + second.getRadius();
+	bool isIn1 = (getX1 <= second.getCenter().getX()) && (second.getCenter().getX() <= getX2);
+	bool isIn2 = (getY1 <= second.getCenter().getY()) && (second.getCenter().getY() <= getY2);
+	bool isIn12 = (getX1 <= second.getCenter().getX()) && (second.getCenter().getX() <= getX2);
+	bool isIn22 = (getY1 <= second.getCenter().getY()) && (second.getCenter().getY() <= getY2);
+	return(isIn1 && isIn2 && second.getRadius() <= first.getRadius() ||
+		isIn12 && isIn22 && first.getRadius() <= second.getRadius());
+}
+
+bool isCircleInRectangle(const Circle& c, const Rectangle& r)
+{
+	double getX1 = c.getCenter().getX() - c.getRadius();
+	double getX2 = c.getCenter().getX() + c.getRadius();
+	double getY1 = c.getCenter().getY() - c.getRadius();
+	double getY2 = c.getCenter().getY() + c.getRadius();
+	bool isIn1 = (getX1 <= r.getFirstCoordX()) && (r.getSecondCoordX() <= getX2);
+	bool isIn2 = (getY1 <= r.getFirstCoordY()) && (r.getSecondCoordY() <= getY2);
+	return (isIn1 && isIn2 && c.getRadius() <= r.getHeight() / 2 && c.getRadius <= r.getWidth() / 2);
+}
+
+bool isRectangleInRectangle(const Rectangle &r1, const Rectangle r2)
+{
+	bool firstX = r2.getFirstCoordX() >= r1.getFirstCoordX() && r2.getFirstCoordX() <= r1.getSecondCoordX();
+	bool firstY = r2.getFirstCoordY() >= r1.getFirstCoordY() && r2.getFirstCoordY() <= r1.getSecondCoordY();
+	bool first = firstX && firstY;
+	bool secondX = r2.getSecondCoordX() >= r1.getSecondCoordX() && r2.getSecondCoordX() <= r1.getSecondCoordX();
+	bool secondY = r2.getSecondCoordY() >= r1.getFirstCoordY() && r2.getSecondCoordY() <= r1.getSecondCoordY();
+	bool second = secondX && secondY;
+	bool firstX1 = r1.getFirstCoordX() >= r2.getFirstCoordX() && r1.getFirstCoordX() <= r2.getSecondCoordX();
+	bool firstY1 = r1.getFirstCoordY() >= r2.getFirstCoordY() && r1.getFirstCoordY() <= r2.getSecondCoordY();
+	bool first1 = firstX1 && firstY1;
+	bool secondX1 = r1.getSecondCoordX() >= r2.getSecondCoordX() && r1.getSecondCoordX() <= r2.getSecondCoordX();
+	bool secondY1 = r1.getSecondCoordY() >= r2.getFirstCoordY() && r1.getSecondCoordY() <= r2.getSecondCoordY();
+	bool second1 = secondX1 && secondY1;
+	return (first && second) || (first1 && second1);
+}
+
+bool isTriangleInRectangle(const Rectangle &r, const Triangle &t)
+{
+	bool firstX = t.getFirstCoordX() >= r.getFirstCoordX() && t.getFirstCoordX() <= r.getSecondCoordX();
+	bool firstY = t.getFirstCoordY() >= r.getFirstCoordY() && t.getFirstCoordY() <= r.getSecondCoordY();
+	bool first = firstX && firstY;
+	bool secondX = t.getSecondCoordX() >= r.getFirstCoordX() && t.getSecondCoordX() <= r.getSecondCoordX();
+	bool secondY = t.getSecondCoordY() >= r.getFirstCoordY() && t.getSecondCoordY() <= r.getSecondCoordY();
+	bool second = secondX && secondY;
+	bool thirdX = t.getThirdCoordX() >= r.getFirstCoordX() && t.getThirdCoordX() <= r.getSecondCoordX();
+	bool thirdY = t.getThirdCoordY() >= r.getFirstCoordY() && t.getThirdCoordY() <= r.getSecondCoordY();
+	bool third = thirdX && thirdY;
+	bool second = first && second && third;
+}
+
+bool isTriangleInCircle(const Triangle &t, const Circle &c)
+{
+	bool first = pow(t.getFirstCoordX(), 2) + pow(t.getFirstCoordY(), 2) <= c.getRadius();
+	bool second = pow(t.getSecondCoordX(), 2) + pow(t.getSecondCoordY(), 2) <= c.getRadius();
+	bool third = pow(t.getThirdCoordX(), 2) + pow(t.getThirdCoordY(), 2) <= c.getRadius();
+	return first && second && third;
+}
+
+bool isRectangleInCirlce(const Rectangle &r, const Circle &c)
+{
+	bool first = pow(r.getFirstCoordX(), 2) + pow(r.getFirstCoordY(), 2) <= c.getRadius();
+	bool second = pow(r.getSecondCoordX(), 2) + pow(r.getSecondCoordY(), 2) <= c.getRadius();
+	return first && second;
+}
+
+int main()
+{
+	Figure *f[3];
+	Dot a[3];
+	a[0].setX(1); a[0].setY(2);
+	a[1].setX(3); a[1].setY(4);
+	a[2].setX(5); a[2].setY(6);
+	Triangle t(a[0], a[1], a[2]);
+	Rectangle r(a[1], a[0]);
+	Circle c(a[2], 1.5);
+	f[0] = &t;
+	f[1] = &r;
+	f[2] = &c;
+	for (int i = 0; i < 3; i++)
+	{
+		f[i]->area();
+		f[i]->perim();
+	}
+	cout << "Is the triangle in the circle: " << isTriangleInCircle(t, c) << endl;
+	cout << "Is the rectangle in the circle: " << isRectangleInCirlce(r, c) << endl;
+
+	system("pause");
+	return 0;
+}
