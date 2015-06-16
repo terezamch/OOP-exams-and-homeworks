@@ -1,0 +1,478 @@
+#include <iostream>
+#include <cstring>
+#include <cassert>
+#define _USE_MATH_DEFINES
+#include <cmath>
+using namespace std;
+class Point
+{
+    double x,
+           y;
+public:
+    Point(double x = 0, double y = 0)
+    {
+        this->x = x;
+        this->y = y;
+    }
+    Point(const Point& other)
+    {
+        x = other.x;
+        y = other.y;
+    }
+    ~Point()
+    {
+
+    }
+    Point& operator=(const Point& other)
+    {
+        if(this != &other)
+        {
+            x = other.x;
+            y = other.y;
+        }
+        return *this;
+    }
+    double getX() const
+    {
+        return x;
+    }
+    double getY() const
+    {
+        return y;
+    }
+    bool operator==(const Point& p)
+    {
+        if(this->getX() == p.getX() && this->getY() == p.getY())
+            return true;
+        return false;
+    }
+    bool isBetween(Point p1, Point p2)
+    {
+        if(this->getX() > p1.getX() && this->getX() < p2.getX()
+           && this->getY() < p1.getY() && this->getY() > p2.getY())
+           return true;
+        return false;
+    }
+    void printP()
+    {
+        cout<<"("<<x<<","<<y<<")"<<endl;
+    }
+};
+class Figure : public Point
+{
+public:
+    virtual double getPerimeter() const = 0;
+    virtual double getArea() const = 0;
+    virtual Point getCenter() const = 0;
+    virtual char* getType() const = 0;
+    virtual double getLowestX() = 0;
+    virtual double getLowestY() = 0;
+    virtual double getHighestX() = 0;
+    virtual double getHighestY() = 0;
+    virtual Point getA() const = 0;
+    virtual Point getB() const = 0;
+    virtual Point getC() const = 0;
+    virtual Point getD() const = 0;
+    virtual double getR() const = 0;
+    virtual void print() = 0;
+};
+class Triangle : public Figure
+{
+    Point a,
+          b,
+          c;
+public:
+    Triangle(double x1 = 0, double y1 = 0, double x2 = 1, double y2 = 1, double x3 = 2, double y3 = 2)
+    {
+        this->a = Point(x1, y1);
+        this->b = Point(x2, y2);
+        this->c = Point(x3, y3);
+    }
+    Triangle(const Triangle& other)
+    {
+        a = other.a;
+        b = other.b;
+        c = other.c;
+    }
+    ~Triangle()
+    {
+
+    }
+    Triangle& operator=(const Triangle& other)
+    {
+        if(this != &other)
+        {
+            a = other.a;
+            b = other.b;
+            c = other.c;
+        }
+        return *this;
+    }
+    bool operator==(const Triangle& t)
+    {
+        if(this->a == t.a && this->b == t.b && this->c == t.c)
+            return true;
+        return false;
+    }
+    Point getA() const
+    {
+        return a;
+        //eventualno proverki koq tochka priemame za pyrva
+    }
+    Point getB() const
+    {
+        return b;
+    }
+    Point getC() const
+    {
+        return c;
+    }
+    Point getD() const
+    {
+
+    }
+    Point getCenter() const
+    {
+        double x = (a.getX()*this->trdSide() + b.getX()*this->sndSide() + c.getX()*this->fstSide())/this->getPerimeter();
+        double y = (a.getY()*this->trdSide() + b.getY()*this->sndSide() + c.getY()*this->fstSide())/this->getPerimeter();
+        Point c(x,y);
+        return c;
+    }
+    double getR() const
+    {
+
+    }
+    double getLowestX()
+    {
+        return min(a.getX(), min(b.getX(), c.getX()));
+    }
+    double getLowestY()
+    {
+        return min(a.getY(), min(b.getY(), c.getY()));
+    }
+    double getHighestX()
+    {
+        return max(a.getX(), max(b.getX(), c.getX()));
+    }
+    double getHighestY()
+    {
+        return max(a.getY(), max(b.getY(), c.getY()));
+    }
+    double fstSide() const
+    {
+        return sqrt(pow((a.getX() - b.getX()),2) + pow((a.getY() - b.getY()),2));
+    }
+    double sndSide() const
+    {
+        return sqrt(pow((a.getX() - c.getX()),2) + pow((a.getY() - c.getY()),2));
+    }
+    double trdSide() const
+    {
+        return sqrt(pow((c.getX() - b.getX()),2) + pow((c.getY() - b.getY()),2));
+    }
+    double getPerimeter() const
+    {
+        return (this->fstSide() + this->sndSide() + this->trdSide());
+    }
+    double getArea() const
+    {
+        double p = this->getPerimeter()/2;
+        return sqrt(p*(p - this->fstSide())*(p - this->sndSide())*(p - this->trdSide()));
+    }
+    char* getType() const
+    {
+        return "triangle";
+    }
+    void print()
+    {
+        cout<<"Triangle: "<<endl;
+        a.printP();
+        b.printP();
+        c.printP();
+    }
+};
+class Rectangle : public Figure
+{
+    Point TL,// top left = D
+          TR,// top right = C
+          BL,// bottom left = A
+          BR;// bottom right = B
+public:
+    Rectangle(double x1 = 0, double y1 = 0, double x2 = 1, double y2 = 1, double x3 = 2, double y3 = 2, double x4 = 3, double y4 = 3)
+    {
+        this->BL = Point(x1, y1);
+        this->BR = Point(x2, y2);
+        this->TL = Point(x3, y3);
+        this->TR = Point(x4, y4);
+    }
+    Rectangle(const Rectangle& other)
+    {
+        BL = other.BL;
+        BR = other.BR;
+        TL = other.TL;
+        TR = other.TR;
+    }
+    ~Rectangle()
+    {
+
+    }
+    Rectangle& operator=(const Rectangle& other)
+    {
+        if(this != &other)
+        {
+            BL = other.BL;
+            BR = other.BR;
+            TL = other.TL;
+            TR = other.TR;
+        }
+        return *this;
+    }
+    bool operator==(const Rectangle& r)
+    {
+        if(this->BL == r.BL && this->BR == r.BR && this->TL == r.TL && this->TR == r.TR)
+            return true;
+        return false;
+    }
+    double getLowestX()
+    {
+        return min(BL.getX(), min(BR.getX(), min(TL.getX(), TR.getX())));
+    }
+    double getHighestX()
+    {
+        return max(BL.getX(), max(BR.getX(), max(TL.getX(), TR.getX())));
+    }
+    double getLowestY()
+    {
+        return min(BL.getY(), min(BR.getY(), min(TL.getY(), TR.getY())));
+    }
+    double getHighestY()
+    {
+        return max(BL.getY(), max(BR.getY(), max(TL.getY(), TR.getY())));
+    }
+    Point getD() const
+    {
+        return TL;
+    }
+    Point getC() const
+    {
+        return TR;
+    }
+    Point getA() const
+    {
+        return BL;
+    }
+    Point getB() const
+    {
+        return BR;
+    }
+    double getHeight() const
+    {
+        return sqrt(pow((TL.getX() - BL.getX()),2) + pow((TL.getY() - BL.getY()),2));
+    }
+    double getWidth() const
+    {
+        return sqrt(pow((BR.getX() - BL.getX()),2) + pow((BR.getY() - BL.getY()),2));
+    }
+    Point getCenter() const
+    {
+        if(this->getWidth() == this->getHeight())
+        {
+            Point c((TL.getX() + BR.getX())/2, (TL.getY() + BR.getY())/2);
+            return c;
+        }
+        cout<<"Pravoygylnikyt nqma centyr"<<endl;
+        //ako priemem, che centyryt na pravoygylnik e presechnata tochka na diagonalite,
+        //to formulata shte vaji i v obshtiq sluchai (bez if)
+    }
+    double getR() const
+    {
+
+    }
+    double getPerimeter() const
+    {
+        return (2*this->getHeight() + 2*this->getWidth());
+    }
+    double getArea() const
+    {
+        return this->getWidth()*this->getHeight();
+    }
+    char* getType() const
+    {
+        return "rectangle";
+    }
+    void print()
+    {
+        cout<<"Rectangle: "<<endl;
+        BL.printP();
+        BR.printP();
+        TR.printP();
+        TL.printP();
+    }
+};
+class Circle : public Figure
+{
+    Point c;
+    double r;
+public:
+    Circle(double x1 = 0, double y1 = 0, double r = 1)
+    {
+        this->c = Point(x1, y1);
+        this->r = r;
+    }
+    Circle(const Circle& other)
+    {
+        c = other.c;
+        r = other.r;
+    }
+    ~Circle()
+    {
+
+    }
+    Circle& operator=(const Circle& other)
+    {
+        if(this != &other)
+        {
+            c = other.c;
+            r = other.r;
+        }
+        return *this;
+    }
+    double getR() const
+    {
+        return r;
+    }
+    Point getCenter() const
+    {
+        return c;
+    }
+    Point getA() const
+    {
+
+    }
+    Point getB() const
+    {
+
+    }
+    Point getC() const
+    {
+
+    }
+    Point getD() const
+    {
+
+    }
+    double getLowestX()
+    {
+
+    }
+    double getLowestY()
+    {
+
+    }
+    double getHighestX()
+    {
+
+    }
+    double getHighestY()
+    {
+
+    }
+    bool operator==(const Circle& other)
+    {
+        if(this->getCenter() == other.getCenter() && this->getR() == other.getR())
+            return true;
+        return false;
+    }
+    double getPerimeter() const
+    {
+        return 2*r*M_PI;
+    }
+    double getArea() const
+    {
+        return r*r*M_PI;
+    }
+    char* getType() const
+    {
+        return "circle";
+    }
+    void print()
+    {
+        cout<<"Circle: "<<endl;
+        cout<<"R: "<<r<<" ";
+        c.printP();
+    }
+};
+bool isInFigure(Figure* f1, Figure* f2)
+{
+    if(!strcmp(f1->getType(), "rectangle") && !strcmp(f2->getType(), "circle"))
+    {
+        if(abs(f2->getCenter().getX() - f1->getC().getX()) >= f2->getR() &&
+           abs(f2->getCenter().getX() - f1->getB().getX()) >= f2->getR() &&
+           abs(f2->getCenter().getY() - f1->getC().getY()) >= f2->getR() &&
+           abs(f2->getCenter().getY() - f1->getB().getY()) >= f2->getR())
+           return true;
+        else return false;
+    }
+    if(!strcmp(f1->getType(), "rectangle") && !strcmp(f2->getType(), "triangle"))
+    {
+        if(f2->getA().getX() > f1->getLowestX() && f2->getA().getX() < f1->getHighestX() &&
+           f2->getB().getX() > f1->getLowestX() && f2->getB().getX() < f1->getHighestX() &&
+           f2->getC().getX() > f1->getLowestX() && f2->getC().getX() < f1->getHighestX() &&
+           f2->getA().getY() > f1->getLowestY() && f2->getA().getY() < f1->getHighestY() &&
+           f2->getB().getY() > f1->getLowestY() && f2->getB().getY() < f1->getHighestY() &&
+           f2->getC().getY() > f1->getLowestY() && f2->getC().getY() < f1->getHighestY())
+           return true;
+        return false;
+    }
+    if(!strcmp(f1->getType(), "circle") && !strcmp(f1->getType(), "rectangle"))
+    {
+        if(sqrt(pow(f2->getB().getX() - f1->getCenter().getX(),2) + pow(f2->getB().getY() - f1->getCenter().getY(),2)) <= f2->getR() &&
+           sqrt(pow(f2->getA().getX() - f1->getCenter().getX(),2) + pow(f2->getA().getY() - f1->getCenter().getY(),2)) <= f2->getR() &&
+           sqrt(pow(f2->getD().getX() - f1->getCenter().getX(),2) + pow(f2->getD().getY() - f1->getCenter().getY(),2)) <= f2->getR() &&
+           sqrt(pow(f2->getC().getX() - f1->getCenter().getX(),2) + pow(f2->getC().getY() - f1->getCenter().getY(),2)) <= f2->getR())
+           return true;
+        return false;
+    }
+    if(!strcmp(f1->getType(), "circle") && !strcmp(f2->getType(), "triangle"))
+    {
+        if(sqrt(pow(f2->getA().getX() - f1->getCenter().getX(),2) + pow(f2->getA().getY() - f1->getCenter().getY(),2)) <= f2->getR() &&
+           sqrt(pow(f2->getB().getX() - f1->getCenter().getX(),2) + pow(f2->getB().getY() - f1->getCenter().getY(),2)) <= f2->getR() &&
+           sqrt(pow(f2->getC().getX() - f1->getCenter().getX(),2) + pow(f2->getC().getY() - f1->getCenter().getY(),2)) <= f2->getR())
+           return true;
+        return false;
+    }
+    if(!strcmp(f1->getType(), "triangle") && !strcmp(f1->getType(), "rectangle"))
+    {
+        if(f2->getLowestX() > f1->getLowestX() && f2->getLowestX() < f1->getHighestX() &&
+           f2->getHighestX() > f1->getLowestX() && f2->getHighestX() < f1->getHighestX() &&
+           f2->getLowestY() > f1->getLowestY() && f2->getLowestY() < f1->getHighestY() &&
+           f2->getHighestY() > f1->getLowestY() && f2->getHighestY() < f1->getHighestY())
+           return true;
+        return false;
+    }
+    if(!strcmp(f1->getType(), "triangle") && !strcmp(f2->getType(), "circle"))
+    {
+        if(sqrt(pow(f2->getA().getX() - f1->getCenter().getX(),2) + pow(f2->getA().getY() - f1->getCenter().getY(),2)) <= f2->getR() &&
+           sqrt(pow(f2->getB().getX() - f1->getCenter().getX(),2) + pow(f2->getB().getY() - f1->getCenter().getY(),2)) <= f2->getR() &&
+           sqrt(pow(f2->getC().getX() - f1->getCenter().getX(),2) + pow(f2->getC().getY() - f1->getCenter().getY(),2)) <= f2->getR())
+           return true;
+        return false;
+    }
+    if(!strcmp(f1->getType(), "circle") && !strcmp(f2->getType(), "circle"))
+    {
+        if(sqrt(pow((f1->getCenter().getX() - f2->getCenter().getX()),2) + pow((f1->getCenter().getY() - f2->getCenter().getY()),2)) < f1->getR()
+           && f1->getR() < 2*f2->getR())
+           return true;
+        return false;
+    }
+}
+int main()
+{
+    Rectangle r;
+    Circle c;
+    Triangle t;
+    Figure* f[3] = {&r, &c, &t};
+
+
+return 0;
+}
