@@ -1,0 +1,308 @@
+#include <iostream>
+#include <cmath>
+#include <cstring>
+#include <cassert>
+using namespace std;
+class Point
+{
+private:
+    double x;
+    double y;
+public:
+    Point()
+    {
+        x=0;
+        y=0;
+    }
+    Point(const Point& other) //copy-konstr
+    {
+        x =other.x;
+        y =other.y;
+    }
+    Point() {} //destriktor
+    Point(double x=0,double y=0) // default konstr
+    {
+        this->x =x;
+        this->y =y;
+    }
+    Point& operator=(const Point& other) //oper =
+    {
+        if(this!= &other)
+        {
+            x =other.x;
+            y =other.y;
+        }
+        return *this;
+    }
+    double getX() const //metodi
+    {
+        return x;
+    }
+    void setX (double t)
+    {
+        x=t;
+    }
+    double getY() const
+    {
+        return y;
+    }
+    void setY (double m)
+    {
+        y=m;
+    }
+    void print()
+    {
+        cout<<"X="<<x<<endl;
+        cout<<"Y="<<y<<endl;
+    }
+    bool operator==(const Point& other)
+    {
+        return (this->getX() == other.getX() && this->getY() == other.getY());
+    }
+    double getDistance(const Point& p, const Point& q)
+    {
+        return sqrt(pow((p.getX()-q.getX()),2) + pow((p.getY()-q.getY()),2));
+    }
+};
+class Figure : public Point
+{
+public:
+    virtual double FullSpace() const = 0;
+    virtual double Perimeter() const = 0;
+    virtual Point  Center() const = 0;
+    virtual char*  getType() const = 0;
+    virtual bool   isInsideAnother() = 0;
+    virtual double Radius() const = 0;
+    virtual Point findA() const = 0;
+    virtual Point findB() const = 0;
+    virtual Point findC() const = 0;
+    virtual Point findD() const = 0;
+    void print()
+    {
+        cout<<"FullSpace:"<<FullSpace()<<endl;
+        cout<<"Perimeter:"<<Perimeter()<<endl;
+        cout<<"Center:"<<Center()<<endl;
+    }
+};
+class Triangle : public Figure
+{
+private:
+    Point A; // vurhovete na 3agalnika, ot itp Point
+    Point B;
+    Point C;
+public:
+    Triangle(double xA = 0, double yA = 1, double xB = 4, double yB = 2, double xC = 3, double yC = 8)
+    {
+        this->A = Point(xA, yA);
+        this->B = Point(xB, yB);
+        this->C = Point(xC, yC);
+    }
+    ~Triangle() {}
+    Triangle(const Triangle& other)
+    {
+        A = other.A;
+        B = other.B;
+        C = other.C;
+    }
+    Triangle& operator=(const Triangle& other)
+    {
+        if(this != &other)
+        {
+            A = other.A;
+            B = other.B;
+            C = other.C;
+        }
+        return *this;
+    }
+    bool operator==(const Triangle& other)
+    {
+        return (this->A == other.A && this->B == other.B && this->C == other.C);
+    }
+    virtual Point findA() const
+    {
+        return A;
+    }
+    virtual Point findB() const
+    {
+        return B;
+    }
+    virtual Point findC() const
+    {
+        return C;
+    }
+    virtual Point getCenter() const
+    {
+        Point Center((((getDistance(B,C))*A.getX() + (getDistance(A,C))*B.getX() + (getDistance(B,A))*C.getX())/Perimeter()),
+                     (((getDistance(B,C))*A.getY() + (getDistance(A,C))*B.getY() + (getDistance(B,A))*C.getY())/Perimeter()));
+        return Center;
+    }
+    virtual double Radius() const
+    {
+        Triangle other(A.getX(),
+                       A.getY(),
+                       B.getX(),
+                       B.getY(),
+                       (getCenter()).getX(),
+                       (getCenter()).getY());
+        double surface = other.FullSpace();
+        return 2*surface/(getDistance(A,B));
+    }
+    virtual double Perimeter() const
+    {
+        return (getDistance(A,B) + getDistance(B,C) + getDistance(C,A));
+    }
+    virtual double FullSpace() const
+    {
+        return sqrt((Perimeter()/2)*(Perimeter()/2 - getDistance(A,B))*(Perimeter()/2 - getDistance(B,C))*(Perimeter()/2 - getDistance(A,C))); // Heronova f-la
+    }
+    virtual char* getType() const
+    {
+        return 't_angle';
+    }
+    virtual bool isInsideAnother() //za dovarshvane
+    {
+
+    }
+};
+class Rectangle : public Figure
+{
+private:
+    Point A;
+    Point B;
+    Point C;
+    Point D;
+public:
+    virtual Point findA() const
+    {
+        return A;
+    }
+    virtual Point findB() const
+    {
+        return B;
+    }
+    virtual Point findC() const
+    {
+        return C;
+    }
+    virtual Point findD() const
+    {
+        return D;
+    }
+    Rectangle(double xA = 0, double yA = 3, double xB = 4, double yB = 2, double xC = 1, double yC = 1, double xD=3, double yD=7)
+    {
+        this->A = Point(xA, yA);
+        this->B = Point(xB, yB);
+        this->C = Point(xC, yC);
+        this->D = Point(xD, yD);
+    }
+    ~Rectangle() {}
+    Rectangle(const Triangle& other)
+    {
+        A = other.A;
+        B = other.B;
+        C = other.C;
+        D = other.D;
+    }
+    Rectangle& operator=(const Rectangle& other)
+    {
+        if(this != &other)
+        {
+            A = other.A;
+            B = other.B;
+            C = other.C;
+            D = other.D;
+        }
+        return *this;
+    }
+    bool operator==(const Rectangle& other)
+    {
+        return (this->A == other.A && this->B == other.B && this->C == other.C && this->D == other.D);
+    }
+    virtual Point findA() const
+    {
+        return A;
+    }
+    virtual Point findB() const
+    {
+        return B;
+    }
+    virtual Point findC() const
+    {
+        return C;
+    }
+    virtual Point findD() const
+    {
+        return D;
+    }
+    double getAD() const
+    {
+        return sqrt(pow((D.getX() - A.getX()),2) + pow((D.getY() - A.getY()),2));
+    }
+    double getAB() const
+    {
+        return sqrt(pow((B.getX() - A.getX()),2) + pow((B.getY() - A.getY()),2));
+    }
+    virtual double Perimeter() const
+    {
+        return (2*this->getAD() + 2*this->getAB());
+    }
+    virtual double FullSpace() const
+    {
+        return this->getAD()*this->getAB();
+    }
+    virtual char* getType() const
+    {
+        return 'r_angle';
+    }
+};
+class Round : public Figure
+{
+private:
+    Point O;
+    double rad;
+public:
+    Round (double xO = 0, double yO = 0, double rad = 1)
+    {
+        this->O = Point(xO, yO);
+        this->rad = rad;
+    }
+    Round (const Round& other)
+    {
+        O = other.O;
+        rad = other.rad;
+    }
+    ~Round() {}
+    Round& operator=(const Round& other)
+    {
+        if(this != &other)
+        {
+            O = other.O;
+            rad = other.rad;
+        }
+        return *this;
+    }
+    virtual double Radius() const
+    {
+        return rad;
+    }
+    virtual Point Center() const
+    {
+        return O.getX(), O.getY();
+    }
+    bool operator==(const Round& other)
+    {
+        return(this-> Center() == other.Center() && this->Radius() == other. Radius());
+    }
+    virtual double Perimeter() const
+    {
+        return 2*r*3.14;
+    }
+    virtual double FullSpace() const
+    {
+        return r*r*3.14;
+    }
+    virtual char* getType() const
+    {
+        return 'circle';
+    }
+};
