@@ -7,7 +7,7 @@ K1 - Group 1: </br>
 71530 K1 6.00 D1 5.50 K2 5.00 D2 5.50 <strong> Final: 6.00 </strong> </br>
 71565 K1 5.20 D1 2.00 K2 3.30 D2 2.00 <strong> Final: 4.00 </strong> </br>
 71568 K1 3.40 D1 4.00 K2 3.40 D2 2.00 <strong> Final: 3.00 </strong> </br>
-71580 K1 4.80 D1 2.00 K2 3.50 D2 5.00 <strong> Final: 4.00 </strong> </br>
+71580 K1 4.80 D1 4.00 K2 3.50 D2 5.00 <strong> Final: 4.00 </strong> </br>
 71559 K1 3.00 D1 2.00 K2 2.00 D2 2.00 <strong> Final: 2.00</strong> (shame *ding*)< </br>
 71574 K1 2.00(6.00) (shame *ding* cheater) D1: 6.00  K2 5.60 D2: 6.00 <strong> Final: 6.00</strong> </br>
 71592 K1 4.20 D1 2.00 K2 3.00 D2 2.00 <strong> Final: 3.00</strong> </br>
@@ -16,12 +16,12 @@ K1 - Group 1: </br>
 71577 K1 3.40 D1 4.50 K2 2.50 D2 3.50 <strong> Final: 3.00</strong> </br>
 71583 K1 5.70 D1 6.00 K2 3.00 D2 2.00 <strong> Final: 4.00</strong> </br>
 71595 K1 5.80 D1 2.00 K2 3.70 D2 6.00 <strong> Final: 5.00</strong> </br>
-71533 K1 5.50 D1 6.00 K2 5.50 D2 2.00 <strong> Final: 6.00</strong> </br>
+71533 K1 5.50 D1 6.00 K2 5.50 D2 6.00 <strong> Final: 6.00</strong> </br>
 71586 K1 4.50 D1 4.00 K2 3.30 D2 2.00 <strong> Final: 3.00</strong> </br>
 71550 K1 5.60 D1 5.50 K2 4.00 D2 5.50 <strong> Final: 6.00 </strong> </br>
 71589 K1 5.00 D1 5.00 K2 4.00 D2 5.00 <strong> Final: 5.00 </strong> </br>
 71553 K1 5.70 D1 6.00 K2 5.00 D2 6.00 <strong> Final: 6.00 </strong> </br>
-71542 K1 4.00 D1 2.00 K2 3.40 D2 2.00 <strong> Final: 2.00 </strong></br>
+71542 K1 4.00 D1 4.00 K2 3.40 D2 4.00 <strong> Final: 4.00 </strong></br>
 
 
 K1 - Group 2: </br>
