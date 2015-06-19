@@ -1,0 +1,260 @@
+#include <iostream>
+#include <cassert>
+#include <cmath>
+#define M_PI 3.14159265358979323846
+using namespace std;
+
+
+class Figure{
+public:
+	virtual double getAB() = 0;	// namirame AB
+	virtual double getBC() = 0; // namirame BC
+	virtual double getAC() = 0; // namirame AC
+	virtual double getCD() = 0; // namirame CD
+	virtual double getR() = 0; //namirame radiusa
+	virtual char* type() = 0;
+	virtual double perimeter() = 0;
+	virtual double area() = 0;
+	virtual void center() = 0;
+};
+class Triangle : virtual public Figure{
+private:
+	int point1x;
+	int point2x;
+	int point3x;
+	int point1y;
+	int point2y;
+	int point3y;
+	void cpy(int point1x, int point2x, int point3x, int point1y, int point2y, int point3y){
+		this->point1x = point1x;
+		this->point1y = point1y;
+		this->point2x = point2x;
+		this->point2y = point2y;
+		this->point3x = point3x;
+		this->point3y = point3y;
+	}
+public:
+	Triangle(int point1x = 0, int point2x = 0, int point3x = 0, int point1y = 0, int point2y = 0, int point3y = 0){
+		cpy(point1x, point2x, point3x, point1y, point2y, point3y);
+	}
+	Triangle(const Triangle& other){
+		cpy(other.point1x, other.point2x, other.point3x, other.point1y, other.point2y, other.point3y);
+	}
+	Triangle& operator=(const Triangle& other){
+		if (this != &other){
+			cpy(other.point1x, other.point2x, other.point3x, other.point1y, other.point2y, other.point3y);
+		}
+		return *this;
+	}
+	~Triangle(){}
+	virtual double getAB(){
+		double ab = 0;
+		if (point1x == point2x){
+			ab = abs(point1y - point2y);
+		}
+		else if(point1y == point2y){
+			ab = abs(point1x - point2y);
+		}
+		else{
+			ab = sqrt(pow(abs(point1x - point2x), 2) + pow(abs(point1y - point2y), 2));
+		}
+		return ab;
+	}
+	virtual double getAC(){
+		double ac = 0;
+		if (point1x == point3x){
+			ac = abs(point1y - point3y);
+		}
+		else if(point1y == point3y){
+			ac = abs(point1x - point3y);
+		}
+		else{
+			ac = sqrt(pow(abs(point1x - point3x), 2) + pow(abs(point1y - point3y), 2));
+		}
+		return ac;
+	}
+	virtual double getBC(){
+		double bc = 0;
+		if (point2x == point3x){
+			bc = abs(point2y - point3y);
+		}
+		else if(point2y == point3y){
+			bc = abs(point2x - point3y);
+		}
+		else{
+			bc = sqrt(pow(abs(point2x - point3x), 2) + pow(abs(point2y - point3y), 2));
+		}
+		return bc;
+	}
+	virtual double perimeter(){
+		double p = getAB() + getAC() + getBC();
+		return p;
+	}
+	virtual double area(){
+		double per = perimeter() / 2;
+		double s = sqrt(per * (per - getAB()) * (per - getAC()) * (per - getBC()));
+		return s;
+	}
+	virtual char* type(){
+		return "triangle";
+	}
+	virtual void center(){
+		int xCenter = (point1x + point2x + point3x) / 3;
+		int yCenter = (point1y + point2y + point3y) / 3;
+		cout << "x: " << xCenter << endl << "y: " << yCenter << endl;
+	}
+};
+class Circle : virtual public Figure{
+private:
+	int point1x;
+	int point1y;
+	int point2x;
+	int point2y;
+	void cpy(int point1x, int point1y, int point2x, int point2y){
+		this->point1x = point1x;
+		this->point1y = point1y;
+		this->point2x = point2x;
+		this->point2y = point2y;
+	}
+public:
+	Circle(int point1x = 0, int point1y = 0, int point2x = 0, int point2y = 0){
+		cpy(point1x, point1y, point2x, point2y);
+	}
+	Circle(const Circle& other){
+		cpy(other.point1x, other.point1y, other.point2x, other.point2y);
+	}
+	~Circle(){}
+	Circle& operator=(const Circle& other){
+		if (this != &other){
+			cpy(other.point1x, other.point1y, other.point2x, other.point2y);
+		}
+		return *this;
+	}
+	virtual double getR(){
+		double r = 0;
+		if (point1x == point2x){
+			r = abs(point1y - point2y);
+		}
+		else if(point1y == point2y){
+			r = abs(point1x - point2y);
+		}
+		else{
+			r = sqrt(pow(abs(point1x - point2x), 2) + pow(abs(point1y - point2y), 2));
+		}
+		return r;
+	}
+	virtual char* type(){
+		return "circle";
+	}
+	virtual double perimeter(){
+		double per = 2 * M_PI * getR();
+		return per;
+	}
+	virtual double area(){
+		double s = M_PI * getR() * getR();
+		return s;
+	}
+
+};
+class Rectangle{
+private:
+	int point1x;
+	int point2x;
+	int point3x;
+	int point4x;
+	int point1y;
+	int point2y;
+	int point3y;
+	int point4y;
+	void cpy(int point1x, int point2x, int point3x, int point4x, int point1y, int point2y, int point3y, int point4y){
+		this->point1x = point1x;
+		this->point1y = point1y;
+		this->point2x = point2x;
+		this->point2y = point2y;
+		this->point3x = point3x;
+		this->point3y = point3y;
+		this->point4x = point4x;
+		this->point4y = point4y;
+	}
+public:
+	Rectangle(int point1x = 0, int point2x = 0, int point3x = 0, int point4x = 0, int point1y = 0, int point2y = 0, int point3y = 0, int point4y = 0){
+		cpy(point1x, point2x, point3x, point4x, point1y, point2y, point3y, point4y);
+	}
+	Rectangle(const Rectangle& other){
+		cpy(other.point1x, other.point2x, other.point3x, other.point4x, other.point1y, other.point2y, other.point3y, other.point4y);
+	}
+	Rectangle& operator=(const Rectangle& other){
+		if (this != &other){
+			cpy(other.point1x, other.point2x, other.point3x, other.point4x, other.point1y, other.point2y, other.point3y, other.point4y);
+		}
+		return *this;
+	}
+	virtual double getAB(){
+		double ab = 0;
+		if (point1x == point2x){
+			ab = abs(point1y - point2y);
+		}
+		else if(point1y == point2y){
+			ab = abs(point1x - point2y);
+		}
+		else{
+			ab = sqrt(pow(abs(point1x - point2x), 2) + pow(abs(point1y - point2y), 2));
+		}
+		return ab;
+	}
+	virtual double getAC(){
+		double ac = 0;
+		if (point1x == point3x){
+			ac = abs(point1y - point3y);
+		}
+		else if(point1y == point3y){
+			ac = abs(point1x - point3y);
+		}
+		else{
+			ac = sqrt(pow(abs(point1x - point3x), 2) + pow(abs(point1y - point3y), 2));
+		}
+		return ac;
+	}
+	virtual double getBC(){
+		double bc = 0;
+		if (point2x == point3x){
+			bc = abs(point2y - point3y);
+		}
+		else if(point2y == point3y){
+			bc = abs(point2x - point3y);
+		}
+		else{
+			bc = sqrt(pow(abs(point2x - point3x), 2) + pow(abs(point2y - point3y), 2));
+		}
+		return bc;
+	}
+	virtual double getCD(){
+		double cd = 0;
+		if (point3x == point4x){
+			cd = abs(point3y - point4y);
+		}
+		else if(point3y == point4y){
+			cd = abs(point3x - point4y);
+		}
+		else{
+			cd = sqrt(pow(abs(point3x - point4x), 2) + pow(abs(point3y - point4y), 2));
+		}
+		return cd;
+	}
+	virtual char* type(){
+		return "rectangle";
+	}
+	virtual double perimeter(){
+		double per = getAB() + getAC() + getBC() + getCD();
+		return per;
+	}
+	virtual double area(){
+		double s = getAB() * getBC();
+		return s;
+	}
+	virtual void center(){
+		int xCenter = (point1x + point2x + point3x + point4x) / 4;
+		int yCenter = (point1y + point2y + point3y + point4x) / 4;
+		cout << "x: " << xCenter << endl << "y: " << yCenter << endl;
+	}
+};
