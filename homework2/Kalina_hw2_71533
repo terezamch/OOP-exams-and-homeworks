@@ -1,0 +1,447 @@
+#include<iostream>
+#include<cstring>
+#include<cassert>
+#include<cmath>
+using namespace std;
+
+class Point
+{
+public:
+    Point (int x = 1, int y = 1)
+    {
+        this->x = x;
+        this->y = y;
+    }
+    Point (const Point& other)
+    {
+        x = other.x;
+        y = other.y;
+    }
+    Point& operator = (const Point& other)
+    {
+        if (this != &other)
+        {
+            x = other.x;
+            y = other.y;
+        }
+        return *this;
+    }
+    int getX () const
+    {
+        return x;
+    }
+    void setX (int x)
+    {
+        this->x = x;
+    }
+    int getY () const
+    {
+        return y;
+    }
+    void setY (int y)
+    {
+        this->y = y;
+    }
+    void print () const
+    {
+        cout << "x " << x << endl;
+        cout << "y " << y << endl;
+    }
+    bool isEqual (const Point other)
+    {
+        return (x == other.x && y == other.y);
+    }
+private:
+    int x;
+    int y;
+};
+
+class Figure
+{
+public:
+    virtual double getArea ()  = 0;
+    virtual double getPerimeter ()  = 0;
+    virtual Point getCentre () = 0;
+    const virtual char* getType () = 0;
+};
+
+class Circle : public Figure
+{
+private:
+    Point O;
+    double r;
+public:
+    Circle (double r, Point O)
+    {
+        this->r = r;
+        this->O = O;
+    }
+    ~Circle()
+    {
+
+    }
+    Circle (const Circle& other)
+    {
+        O = other.O;
+        r = other.r;
+    }
+    Circle& operator = (const Circle& other)
+    {
+        if (this != &other)
+        {
+            O = other.O;
+            r = other.r;
+        }
+        return *this;
+    }
+    virtual double getArea ()
+    {
+        return M_PI*(pow (r, 2));
+    }
+    virtual double getPerimeter ()
+    {
+        return 2*M_PI*r;
+    }
+    Point getCentre ()
+    {
+        return O;
+    }
+    const char* getType ()
+    {
+        return "circle";
+    }
+    bool operator == (const Circle& other)
+    {
+        return (this->r == other.r && O.isEqual(other.O));
+    }
+    double getR () const
+    {
+        return r;
+    }
+    double getOx() const
+    {
+        return O.getX();
+    }
+    double getOy() const
+    {
+        return O.getY();
+    }
+
+};
+
+class Triangle : public Figure
+{
+private:
+    Point points[3];
+public:
+    Triangle (Point a, Point b, Point c)
+    {
+        points[0] = a;
+        points[1] = b;
+        points[2] = c;
+    }
+    ~Triangle()
+    {
+
+    }
+    Triangle (const Triangle& other)
+    {
+        points[0] = other.points[0];
+        points[1] = other.points[1];
+        points[2] = other.points[2];
+    }
+    Triangle& operator = (const Triangle& other)
+    {
+        if (this != &other)
+        {
+            points[0] = other.points[0];
+            points[1] = other.points[1];
+            points[2] = other.points[2];
+        }
+        return *this;
+    }
+    virtual double getArea ()
+    {
+        double result = ( ( (points[0].getX() - points[1].getX())*(points[0].getY() - points[1].getY()) ) +
+                 ((points[1].getX() - points[2].getX())*(points[1].getY() + points[2].getY()) ) +
+                 ((points[2].getX() - points[0].getX())*(points[2].getY() + points[0].getY()) ) );
+        return result/2;
+    }
+    virtual double getPerimeter ()
+    {
+        return getAB() + getCA() + getCB();
+    }
+    const char* getType ()
+    {
+        return "triangle";
+    }
+    Point getCentre ()
+    {
+        double Ox = (points[0].getX() + points[1].getX() + points[2].getX()) / 3;
+        double Oy = (points[0].getY() + points[1].getY() + points[2].getY()) / 3;
+        return Point(Ox, Oy);
+    }
+    double getCenterOx ()
+    {
+        return (points[0].getX() + points[1].getX() + points[2].getX()) / 3;
+    }
+    double getCenterOy ()
+    {
+        return (points[0].getY() + points[1].getY() + points[2].getY()) / 3;
+    }
+    bool operator == (const Triangle& other)
+    {
+        return (points[0].isEqual(other.points[0]) && points[1].isEqual(other.points[1]) && points[2].isEqual(other.points[2]));
+    }
+    double getAB () const
+    {
+        double x = points[1].getX() - points[0].getX();
+        double y = points[1].getY() - points[0].getY();
+        return sqrt ((pow(x, 2)) + pow(y, 2));
+    }
+    double getCB () const
+    {
+        double x = points[2].getX() - points[1].getX();
+        double y = points[2].getY() - points[1].getY();
+        return sqrt ((pow(x, 2)) + pow(y, 2));
+    }
+    double getCA () const
+    {
+        double x = points[2].getX() - points[0].getX();
+        double y = points[2].getY() - points[0].getY();
+        return sqrt ((pow(x, 2)) + pow(y, 2));
+    }
+    double getX (Point p)
+    {
+        return p.getX();
+    }
+    double getY (Point p)
+    {
+        return p.getY();
+    }
+    double getR () const
+    {
+        double result = ( ( (points[0].getX() - points[1].getX())*(points[0].getY() - points[1].getY()) ) +
+                 ((points[1].getX() - points[2].getX())*(points[1].getY() + points[2].getY()) ) +
+                 ((points[2].getX() - points[0].getX())*(points[2].getY() + points[0].getY()) ) );
+        double S = result/2;
+        return ((getAB() + getCA() + getCB())/(2*S));
+    }
+
+};
+
+class Rectangle : public Figure
+{
+private:
+    Point points[2];
+public:
+    Rectangle (Point a, Point b)
+    {
+        this->points[0] = a;
+        this->points[1] = b;
+    }
+    ~Rectangle()
+    {
+
+    }
+    Rectangle (const Rectangle& other)
+    {
+        points[0] = other.points[0];
+        points[1] = other.points[1];
+    }
+    Rectangle& operator = (const Rectangle& other)
+    {
+        if (this != &other)
+        {
+            points[0] = other.points[0];
+            points[1] = other.points[1];
+        }
+        return *this;
+    }
+    double getA()
+    {
+        return abs((points[1].getY() - points[0].getY()));
+    }
+    double getB ()
+    {
+        return abs((points[0].getX() - points[1].getX()));
+    }
+    double getArea ()
+    {
+        return (getA() * getB());
+    }
+    double getPerimeter ()
+    {
+        return 2 * (getA() + getB());
+    }
+    Point getCentre ()
+    {
+        double Ox = (points[1].getX() - points[0].getX()) / 2;
+        double Oy = (points[1].getY() - points[0].getY()) / 2;
+        return Point(Ox, Oy);
+    }
+    double getCentreOx ()
+    {
+        return (points[1].getX() - points[0].getX()) / 2;
+    }
+    double getCentreOy ()
+    {
+        return (points[1].getY() - points[0].getY()) / 2;
+    }
+    const char* getType ()
+    {
+        return "rectangle";
+    }
+    bool operator == (const Rectangle& other)
+    {
+        return (points[0].isEqual(other.points[0]) && points[1].isEqual(other.points[1]));
+    }
+    double getR ()
+    {
+        return getA()/2;
+    }
+
+};
+
+bool isCircleInCircle (Circle c1, Circle c2)
+{
+    double result = abs (c1.getOx() - c2.getOx());
+    double result1 = abs (c1.getOy() - c2.getOy());
+    double biggerR = 0;
+    if (c1.getR() > c2.getR())
+            biggerR = c1.getR();
+    else
+            biggerR = c2.getR();
+    if (sqrt ((pow(result, 2)) + pow(result1, 2)) < biggerR )
+            return true;
+    return false;
+}
+
+bool isTriangleInCircle (Point p0, Point p1, Point p2, Circle c)
+{
+    if ( ((pow((p0.getX() - c.getOx()) , 2 ) <= c.getR()) && ((pow((p1.getX() - c.getOx()), 2 ) <= c.getR()) &&
+        ((pow((p1.getX() - c.getOx()), 2 ) <= c.getR())))))
+            return true;
+    return false;
+}
+
+bool isRectangleInCircle (Point p0, Point p1, Circle c)
+{
+    if ( ((pow((p0.getX() - c.getOx()) , 2 ) <= c.getR()) && ((pow((p1.getX() - c.getOx()), 2 ) <= c.getR()) )))
+            return true;
+    return false;
+}
+
+bool isTriangleInTriangle (Triangle t1, Triangle t2)
+{
+    double biggerR = 0;
+    if (t1.getR() > t2.getR())
+        biggerR = t1.getR();
+    else
+        biggerR = t2.getR();
+
+    double result = abs (t1.getCenterOx() - t2.getCenterOx());
+    double result1 = abs (t1.getCenterOy() - t2.getCenterOy());
+    if (sqrt ((pow(result, 2)) + pow(result1, 2)) < biggerR )
+            return true;
+    return false;
+
+}
+
+bool isCircleInTriangle (Circle c, Triangle t)
+{
+    double biggerR = 0;
+    if (c.getR() > t.getR())
+        biggerR = c.getR();
+    else
+        biggerR = t.getR();
+    double result = abs (t.getCenterOx() - c.getOx());
+    double result1 = abs (t.getCenterOy() - c.getOy());
+    if (sqrt ((pow(result, 2)) + pow(result1, 2)) < biggerR )
+            return true;
+    return false;
+
+}
+
+bool isCircleInRectangle (Circle c, Rectangle r)
+{
+    double biggerR = 0;
+    if (c.getR() > r.getR())
+        biggerR = c.getR();
+    else
+        biggerR = r.getR();
+    double result = abs (r.getCentreOx() - c.getOx());
+    double result1 = abs (r.getCentreOy() - c.getOy());
+    if (sqrt ((pow(result, 2)) + pow(result1, 2)) < biggerR )
+            return true;
+    return false;
+
+}
+
+bool isRectangleInRectangle (Rectangle r1, Rectangle r2)
+{
+    double biggerR = 0;
+    if (r1.getR() > r2.getR())
+        biggerR = r1.getR();
+    else
+        biggerR = r2.getR();
+
+    double result = abs (r1.getCentreOx() - r2.getCentreOx());
+    double result1 = abs (r1.getCentreOy() - r2.getCentreOy());
+    if (sqrt ((pow(result, 2)) + pow(result1, 2)) < biggerR )
+            return true;
+    return false;
+}
+
+
+int main ()
+{
+    //Point p1(0,0);
+    //Point p2(2, 1);
+    //Point p3(1, 1);
+    //Point p4 (3, 1);
+    //Circle c (9, p1);
+    //Triangle t(p2, p3, p4);
+    //cout << isTriangleInCircle(p2, p3, p4, c);
+
+    //Point p2 (-4, 2);
+    //Point p3(-1, 1);
+    //Rectangle r (p2, p3);
+    //cout << r.getA();
+
+    //Point p1(0, 0);
+    //Point p2(5, 0);
+    //Point p3(1, 5);
+    //Point p4 (1, 0);
+    //Point p5(3, 0);
+    //Point p6 (5, 6);
+    //Triangle r (p1, p2, p3);
+    //Triangle r1 (p4, p5, p6);
+    //cout << isTriangleInTriangle(r, r1);
+
+    //Point p (3, 1);
+    //Point p1(-1, 0);
+    //Point p2(7, -1);
+    //Point p3(7,3);
+    //Circle c (0.5, p);
+    //Triangle t (p1, p2, p3);
+    //cout << isCircleInTriangle(c, t);
+
+    //Point p1(0, 5);
+    //Point p2 (5, 0);
+    //Point p (3, 2);
+    //Circle c (1, p);
+    //Rectangle r (p1, p2);
+    //cout << isCircleInRectangle(c, r);
+
+    //Point p1(0, 5);
+    //Point p2 (5, 0);
+    //Point p3 (2, 3);
+    //Point p4(3, 2);
+    //Rectangle r1 (p1, p2);
+    //Rectangle r2 (p3, p4);
+    //cout << isRectangleInRectangle(r2, r1);
+
+
+    return 0;
+}
