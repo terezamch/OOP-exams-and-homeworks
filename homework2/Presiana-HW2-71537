@@ -1,0 +1,223 @@
+#include <iostream>
+#include <cmath>
+#define M_PI
+
+using namespace std;
+
+struct Dot
+{
+public:
+	Dot(double x = 0, double y = 0)
+	{
+		this->x = x;
+		this->y = y;
+	}
+	void setX(double x)
+	{
+		this->x = x;
+	}
+	void setY(double)
+	{
+		this->y = y;
+	}
+	void print() const
+	{
+		cout << "Dot: ( " << x << ", " << y << " )" << endl;
+	}
+	void read()
+	{
+		cout << "Enter x: ";
+		cin >> x;
+		setX(x);
+		cout << endl;
+		cout << "Enter y: ";
+		cin >> y;
+		setY(y);
+		cout << endl;
+	}
+	bool operator==(const Dot& a)
+	{
+		return (this->x == a.x) && (this->y == a.y);
+	}
+	double getX() const
+	{
+		return x;
+	}
+	double getY() const
+	{
+		return y;
+	}
+
+	static double getDistance(Dot &a, Dot& b) 
+	{
+		return sqrt((a.x - b.x) * (a.x - b.x) +
+			(a.y - b.y) * (a.y - b.y));
+	}
+private:
+	double x, y;
+};
+
+class Figure
+{
+public:
+	virtual double area() const = 0;
+	virtual double p() const = 0;
+	virtual Dot& getCenter() = 0;
+	virtual bool isDotInside( Dot &) = 0;
+	virtual bool isInside( Figure &) = 0;
+};
+
+class Triangle : public Figure
+{
+public:
+	Triangle(Dot A, Dot B, Dot C)
+	{
+		this->A = A;
+		this->B = B;
+		this->C = C;
+	}
+	virtual double area() const
+	{
+		double first = (A.getX() - C.getX())*(B.getY() - A.getY());
+		double second = (A.getX() - B.getX())*(C.getY() - A.getY());
+		return abs((first - second) / 2);
+	}
+	virtual double p() 
+	{
+		double a, b, c;
+		getSideLengths(a, b, c);
+		return a + b + c;
+
+	}
+	virtual Dot& getCenter() const
+	{
+		double Ox = (A.getX() + B.getX() + C.getX()) / 3;
+		double Oy = (A.getY() + B.getY() + C.getY()) / 3;
+		return Dot(Ox, Oy);
+	}
+	virtual bool operator==(const Triangle& other)
+	{
+		return  (this->A == other.A) && (this->B == other.B) &&	(this->C == other.C);
+	}
+	
+	virtual bool isDotInside(Dot &a)
+	{
+		bool b1 = sign(a, A,B) < 0;
+		bool b2 = sign(a, B,C) < 0;
+		bool b3 = sign(a, C,A) < 0;
+
+		return ((b1 == b2) && (b2 == b3));
+	}
+	bool isInside(Figure& f) 
+	{
+		return (f.isDotInside(A)) && (f.isDotInside(B)) &&  (f.isDotInside(C));
+	}
+
+private:
+	Dot A,B,C;
+	void getSideLengths(double& a, double& b, double& c)
+	{
+		c = Dot::getDistance(A,C);
+		a = Dot::getDistance(B,C);
+		b = Dot::getDistance(A,C);
+	}
+	int sign(Dot& a, Dot& b, Dot& c) 
+	{
+		return (a.getX() - c.getX()) * (b.getY() - c.getY()) - (b.getX() - c.getX()) * (a.getY() - c.getY());
+	}
+};
+
+class Rectangle : public Figure
+{
+	Rectangle(Dot a, Dot b)
+	{
+		this->a= a;
+		this->b= b;
+	}
+	double getWidth() const
+	{
+		return b.getX() - a.getX();
+	}
+	double getHeight() const
+	{
+		return b.getY() - a.getY();
+	}
+	virtual double area() const
+	{
+		return getWidth() * getHeight();
+	}
+	virtual double p() const
+	{
+		return (2 * (getWidth() + getHeight()));
+	}
+	virtual Dot& getCenter()
+	{
+		return Dot((b.getX() - a.getX()) / 2, (b.getY() - a.getY()) / 2);
+	}
+	
+	virtual bool operator==(const Rectangle& a)
+	{
+		return (this->a == a.a &&	this->b == a.b);
+	}
+
+	virtual bool isDotInside(Dot &d)
+	{
+		return (a.getX() < d.getX()) && (d.getX() < b.getX()) && (a.getY() < d.getY()) && (d.getY() < b.getY());
+	}
+	bool isInside(Figure& f)
+	{
+		Dot p1(b.getX(), a.getY());
+		Dot p2(a.getX(), b.getY ());
+		
+		return f.isDotInside(a) && f.isDotInside(b) && f.isDotInside(p1) && f.isDotInside(p2);
+	}
+
+private:
+	Dot a,b;
+};
+
+class Circle : public Figure
+{
+public:
+	Circle(Dot c = (0,0), double r = 1)
+	{
+		this->c = c;
+		this->r = r;
+	}
+
+	virtual double area() const
+	{
+		return pow(r, 2)M_PI;
+	}
+	virtual double p() const
+	{
+		return (2 * r)M_PI;
+	}
+	virtual Dot& getCenter() 
+	{
+		return c;
+	}
+	virtual bool operator==(const Circle& a)
+	{
+		return ((this->c == a.c) && (this->r == a.r));
+	}
+
+	virtual bool isDotInside(Dot &d)
+	{
+		return Dot::getDistance( getCenter(), d) < r;;
+	}
+	bool isInside(Figure& f)
+	{
+		Dot p1 = (c.getX() + r, c.getY());
+		Dot p2 = (c.getX() - r, c.getY());
+		Dot p3 = (c.getX(), c.getY()+ r);
+		Dot p4 = (c.getX(), c.getY()- r);
+
+		return f.isDotInside(p1) && f.isDotInside(p2) && f.isDotInside(p3) && f.isDotInside(p4);
+	}
+
+private:
+	Dot c;
+	double r;
+};
+
